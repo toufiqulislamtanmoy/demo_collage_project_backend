@@ -67,6 +67,39 @@ export const loginUser = async (req, res, next) => {
   }
 };
 
+export const socialLogin = async (req, res) => {
+  const { name, email, photo, provider } = req.body;
+
+  try {
+    let user = await User.findOne({ email });
+    console.log("user", user);
+    if (!user) {
+      user = await User.create({
+        name,
+        email,
+        photo,
+        provider,
+        password: "",
+      });
+    } else {
+      user.provider = provider;
+      await user.save();
+    }
+
+    res.json({
+      status: "Success",
+      status_code: 200,
+      data: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ status: "Failed", reason: err.message });
+  }
+};
+
 export const updateProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
