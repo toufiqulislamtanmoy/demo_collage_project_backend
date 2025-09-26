@@ -11,6 +11,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.get("/", (req, res) => res.send("Hello from NPL Backend!"));
 
 app.use("/api/auth", authRoutes);
 // Global error handler
