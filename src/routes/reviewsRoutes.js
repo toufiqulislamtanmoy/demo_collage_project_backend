@@ -6,7 +6,7 @@ import { createReview, getAllReviews, getCollegeReviews } from "../controllers/r
 const router = express.Router();
 
 // Add a review
-router.post("/", getAllReviews);
+router.get("/", getAllReviews);
 router.post("/create", protect, createReview);
 
 // Get all reviews for a college

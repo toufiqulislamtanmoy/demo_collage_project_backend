@@ -48,7 +48,7 @@ export const getCollegeReviews = async (req, res) => {
 export const getAllReviews = async (req, res) => {
   try {
     const reviews = await Review.find()
-      .populate("user", "name email")      
+      .populate("user", "name email photo")      
       .populate("college", "name")   
       .sort({ createdAt: -1 });            
 
