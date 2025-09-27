@@ -5,8 +5,8 @@ const userSchema = new mongoose.Schema(
     name: { type: String, required: true },
     email: { type: String, unique: true },
     password: String,
-    university: String,
-    address: { type: String, required: false },
+    university: { type: String, default: "" },
+    address: { type: String, required: false, default: "" },
     photo: { type: String, default: "" },
     provider: { type: String, default: "credentials" },
     isEmailVerified: {

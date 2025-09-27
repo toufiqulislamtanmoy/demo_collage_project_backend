@@ -209,3 +209,23 @@ export const resetPassword = async (req, res, next) => {
     next(err);
   }
 };
+
+// controllers/userController.js
+export const getCurrentUser = async (req, res) => {
+  try {
+    // req.user is set by the protect middleware
+    if (!req.user) {
+      return res.status(401).json({ status: "error", reason: "Not authorized" });
+    }
+
+    // Fetch full user details from DB (exclude password)
+    const user = await User.findById(req.user._id).select("-password");
+
+    res.status(200).json({
+      status: "success",
+      data: user, // all fields except password
+    });
+  } catch (err) {
+    res.status(500).json({ status: "error", reason: err.message });
+  }
+};
