@@ -105,7 +105,7 @@ export const updateProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
 
-    if (!user || !user.isActive) {
+    if (!user) {
       const message = {
         status: "Failed",
         reason: "User not found or deactivated",
@@ -114,11 +114,32 @@ export const updateProfile = async (req, res, next) => {
       return res.status(404).json(message);
     }
 
-    user.name = req.body.name || user.name;
-    user.avatar = req.body.avatar || user.avatar;
+    // Update only allowed fields - prevent updating protected fields like email for Google users
+    const allowedUpdates = {};
+
+    // Always allowed fields
+    if (req.body.name !== undefined) allowedUpdates.name = req.body.name;
+    if (req.body.photo !== undefined) allowedUpdates.photo = req.body.photo;
+    if (req.body.university !== undefined)
+      allowedUpdates.university = req.body.university;
+    if (req.body.address !== undefined)
+      allowedUpdates.address = req.body.address;
+    if (req.body.bio !== undefined) allowedUpdates.bio = req.body.bio;
+    if (req.body.phone !== undefined) allowedUpdates.phone = req.body.phone;
+
+    // Only allow email update for non-Google users
+    if (req.body.email !== undefined && user.provider !== "google") {
+      allowedUpdates.email = req.body.email;
+    }
+
+    // Update the user with allowed fields
+    Object.keys(allowedUpdates).forEach((key) => {
+      user[key] = allowedUpdates[key];
+    });
 
     await user.save();
 
+    // Return complete user data
     res.json({
       status: "Success",
       status_code: 200,
@@ -127,15 +148,42 @@ export const updateProfile = async (req, res, next) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        avatar: user.avatar,
+        photo: user.photo,
+        university: user.university,
+        address: user.address,
+        bio: user.bio,
+        phone: user.phone,
+        provider: user.provider,
+        isEmailVerified: user.isEmailVerified,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
       },
     });
   } catch (err) {
     console.log("error", err);
+
+    // Handle duplicate email error
+    if (err.code === 11000 && err.keyPattern && err.keyPattern.email) {
+      return res.status(400).json({
+        status: "Failed",
+        reason: "Email already exists",
+        status_code: 400,
+      });
+    }
+
+    // Handle validation errors
+    if (err.name === "ValidationError") {
+      const errors = Object.values(err.errors).map((error) => error.message);
+      return res.status(400).json({
+        status: "Failed",
+        reason: errors.join(", "),
+        status_code: 400,
+      });
+    }
+
     next(err);
   }
 };
-
 const generateResetToken = () => {
   const token = crypto.randomBytes(32).toString("hex");
   const hashed = crypto.createHash("sha256").update(token).digest("hex");
@@ -215,7 +263,9 @@ export const getCurrentUser = async (req, res) => {
   try {
     // req.user is set by the protect middleware
     if (!req.user) {
-      return res.status(401).json({ status: "error", reason: "Not authorized" });
+      return res
+        .status(401)
+        .json({ status: "error", reason: "Not authorized" });
     }
 
     // Fetch full user details from DB (exclude password)

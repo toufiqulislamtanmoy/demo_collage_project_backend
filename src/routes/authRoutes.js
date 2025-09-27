@@ -17,5 +17,5 @@ router.post("/login", loginUser);
 router.post("/social-login", socialLogin);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:token", resetPassword);
-router.put("/update-profile", protect, updateProfile);
+router.patch("/update-profile", protect, updateProfile);
 export default router;
