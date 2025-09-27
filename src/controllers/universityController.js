@@ -87,7 +87,25 @@ export const getUniversityById = async (req, res) => {
     });
   }
 };
-
+// get highlighted universities based on rating
+export const getHighlightedUniversities = async (req, res) => {
+  try {
+    const universities = await University.find().sort({ rating: -1 }).limit(3);
+    res.status(200).json({
+      status: "success",
+      reason: "Fetched highlighted universities successfully",
+      status_code: 200,
+      data: universities,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "failed",
+      reason: err.message || "Failed to fetch highlighted universities",
+      status_code: 500,
+      data: null,
+    });
+  }
+}
 //  Create new university
 export const createUniversity = async (req, res) => {
   try {
