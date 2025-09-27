@@ -4,6 +4,11 @@ import express from "express";
 import connectDB from "./config/db.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import authRoutes from "./routes/authRoutes.js";
+import universitiesRoutes from "./routes/universityRoutes.js";
+import eventRoutes from "./routes/eventRoutes.js";
+import sportsRoutes from "./routes/sportsRoutes.js";
+import researchRoutes from "./routes/researchRoutes.js";
+import photoRoutes from "./routes/photosRoutes.js";
 dotenv.config();
 connectDB();
 
@@ -14,6 +19,12 @@ app.use(express.json());
 app.get("/", (req, res) => res.send("Hello from NPL Backend!"));
 
 app.use("/api/auth", authRoutes);
+app.use("/api/universities", universitiesRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/sports", sportsRoutes);
+app.use("/api/research", researchRoutes);
+
+app.use("/api/photos", photoRoutes);
 // Global error handler
 app.use(errorHandler);
 
