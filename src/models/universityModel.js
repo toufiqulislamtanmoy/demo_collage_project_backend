@@ -11,7 +11,8 @@ const universitySchema = new mongoose.Schema({
   about: { type: String },
 
   admissionProcess: { type: String },
-
+  totalStudent: { type: Number, default: 0 },
+  established: { type: Date },
   events: [{ type: mongoose.Schema.Types.ObjectId, ref: "Event" }],
   sports: [{ type: mongoose.Schema.Types.ObjectId, ref: "Sport" }],
   researchPapers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Research" }],

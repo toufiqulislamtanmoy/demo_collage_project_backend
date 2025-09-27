@@ -10,6 +10,7 @@ import sportsRoutes from "./routes/sportsRoutes.js";
 import researchRoutes from "./routes/researchRoutes.js";
 import photoRoutes from "./routes/photosRoutes.js";
 import uploadImageRoutes from "./routes/uploadImageRoute.js";
+import admissionRoutes from "./routes/admissionRoute.js";
 dotenv.config();
 connectDB();
 
@@ -26,6 +27,7 @@ app.use("/api/sports", sportsRoutes);
 app.use("/api/research", researchRoutes);
 
 app.use("/api/photos", photoRoutes);
+app.use("/api/admission", admissionRoutes);
 app.use("/api/upload/", uploadImageRoutes);
 // Global error handler
 app.use(errorHandler);
