@@ -11,7 +11,7 @@ const admissionSchema = new mongoose.Schema(
     address: { type: String, required: true },
     college: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "University",
+      ref: "university",
       required: true,
     },
     submitted_by: { type: String, required: true },

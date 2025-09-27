@@ -5,12 +5,12 @@ import { system_config } from "../config/system.config.js";
 export const protect = async (req, res, next) => {
   const { jwtSecret } = system_config;
   const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.status(401).json({ message: "No token" });
+  if (!token) return res.status(401).json({status: "Failed", status_code: 401, reason: "No token" });
 
   try {
     const decoded = jwt.verify(token, jwtSecret);
     const user = await User.findById(decoded.id).select("-password");
-    if (!user || !user.isActive) {
+    if (!user) {
       const message = {
         status: "Failed",
         reason: "User not found or deactivated",
